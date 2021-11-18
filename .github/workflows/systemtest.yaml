@@ -39,7 +39,7 @@ jobs:
 
   execute:
 
-    runs-on: biggy
+    runs-on: nrk-azure-intern
 
     timeout-minutes: 30
 
