@@ -14,18 +14,27 @@ on:
         default: systemtest
         required: false
         type: string
+      registry:
+        description: The OCI registry to upload container images to
+        default: plattform.azurecr.io
+        required: false
+        type: string
     secrets:
       mdb_github_token:
         description: The github token used for checking out the systemtest repo
+        required: true
+      registry_username:
+        description: The OCI registry username for pulling images
+        required: true
+      registry_password:
+        description: The OCI registry password for pulling images
         required: true
 
 jobs:
 
   systemtest:
 
-    runs-on:
-      - self-hosted
-      - biggy
+    runs-on: biggy
 
     timeout-minutes: 30
 
@@ -45,7 +54,7 @@ jobs:
         timeout-minutes: 3
         shell: bash
         run: |
-          CREDS="$(echo "${{ secrets.PLATTFORM_ACR_PUSH_CLIENT_ID }}:${{ secrets.PLATTFORM_ACR_PUSH_CLIENT_SECRET }}" | base64 -w 0)"
+          CREDS="$(echo "${{ secrets.registry_username }}:${{ secrets.registry_password }}" | base64 -w 0)"
           CHECKURL_LB="https://plattform.azurecr.io/v2/radioarkiv/radioarkiv-stub-standalone/manifests/${{ inputs.lydbanken_stub_imagetag }}"
           CHECKURL_FE="https://plattform.azurecr.io/v2/radioarkiv/radioarkiv-web/manifests/${{ inputs.radioarkiv_web_imagetag }}"
           while true; do
@@ -56,7 +65,7 @@ jobs:
       - name: Prepare systemtest
         shell: bash
         run: |
-          az acr login -u ${{ secrets.PLATTFORM_ACR_PUSH_CLIENT_ID }} -p ${{ secrets.PLATTFORM_ACR_PUSH_CLIENT_SECRET }} --name plattform
+          az acr login -u ${{ secrets.registry_username }} -p ${{ secrets.registry_password }} --name plattform
           ./build-docker-compose.sh
           docker-compose pull || (sleep 30s; docker-compose pull)
           docker-compose --project-name lydbanken up --force-recreate -d
