@@ -106,7 +106,7 @@ jobs:
         uses: mikepenz/action-junit-report@v2.7.0
         if: always()
         with:
-          commit: ${{ inputs.commit }}
+          commit: ${{ inputs.commit_hash }}
           check_name: Systemtest results
           report_paths: "**/build/test-results/**/*.xml"
           github_token: ${{ secrets.GITHUB_TOKEN }}
