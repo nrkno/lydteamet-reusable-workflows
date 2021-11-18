@@ -39,7 +39,9 @@ jobs:
 
   execute:
 
-    runs-on: nrk-azure-intern
+    runs-on:
+      - lydteamet
+      - systemtest
 
     timeout-minutes: 30
 
