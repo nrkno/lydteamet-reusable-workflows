@@ -19,6 +19,7 @@ on:
         description: The github token used for checking out the systemtest repo
         required: true
 
+jobs:
 
   systemtest:
 
