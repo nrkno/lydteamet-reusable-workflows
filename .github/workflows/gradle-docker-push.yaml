@@ -1,0 +1,95 @@
+---
+name: Gradle-docker-push
+
+on:
+  workflow_call:
+    inputs:
+      source_repository:
+        description: |
+          The repository to check out, format owner/reponame
+          Example: nrkno/lydbanken. Usually $GITHUB_REPOSITORY is a safe bet
+        required: true
+        type: string
+      java_release:
+        description: "Major java version to use for build. Example: 11"
+        required: true
+        type: string
+      gradle_tasks:
+        description: "A string containing the gradle tasks to perform. Example: clean build"
+        default: "clean build"
+        required: false
+        type: string
+      gradle_flags:
+        description: "A string containing the gradle flags to pass. Example: -Pit=yesq -Djms.port=25446"
+        required: false
+        type: string
+      gradle_opts:
+        description: "A string containing the gradle options to pass. Example: -Pit=yesq -Djms.port=25446"
+        required: false
+        type: string
+      tag:
+        description: "The tag for the image. Defaults to latest"
+        default: latest
+        required: false
+        type: string
+      docker_context_path:
+        description: |
+          The path where the docker files are located. Also called the "context" by docker.
+          If not given, docker image will not be built/pushed.
+        default: "."
+        required: false
+        type: string
+      oci_repository:
+        description: |
+          The repository name for the image. Example: "radioarkiv/lydbanken-standalone". Folder and image name.
+          If not given, docker image will not be built/pushed.
+          If it is given, remember to also consider the tag, and remember that azurecr requires the secrets registry_username and registry_password.
+        required: false
+        type: string
+      registry:
+        description: The OCI registry to upload container images to
+        default: plattform.azurecr.io
+        required: false
+        type: string
+    secrets:
+      mdb_github_token:
+        description: The github token used for checking out the systemtest repo
+        required: true
+      registry_username:
+        description: The OCI registry username for pulling images
+        required: false
+      registry_password:
+        description: The OCI registry password for pulling images
+        required: false
+
+jobs:
+
+  execute:
+
+    runs-on: biggy
+
+    steps:
+
+      - uses: actions/checkout@v2
+        with:
+          repository: ${{ inputs.source_repository }}
+          submodules: true
+          token: ${{ secrets.mdb_github_token }}
+          persist-credentials: false
+
+      - uses: actions/setup-java@v1
+        with:
+          java-version: ${{ inputs.java_release }}
+
+      - name: gradle build
+        shell: bash
+        run: |
+          ./gradlew ${{ inputs.gradle_flags }} ${{ inputs.gradle_tasks }}
+        env:
+          GRADLE_OPTS: ${{ inputs.gradle_opts }}
+
+      # docker_auth:
+      #
+      # docker_build:
+      #
+      # docker_push:
