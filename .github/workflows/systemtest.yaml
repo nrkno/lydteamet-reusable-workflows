@@ -41,6 +41,7 @@ jobs:
 
     runs-on:
       - lydteamet
+      # This tag only exists on one runner, this preventing multiple paralell runs:
       - systemtest
 
     timeout-minutes: 30
