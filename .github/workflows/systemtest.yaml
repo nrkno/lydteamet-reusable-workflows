@@ -1,0 +1,104 @@
+---
+name: System tests
+
+on:
+  workflow_call:
+    inputs:
+      lydbanken_stub_imagetag:
+        description: The tag for he lydbanken stub image. Defaults to "systemtest", which is tagged by Lydbanken master build upon success.
+        default: systemtest
+        required: false
+        type: string
+      radioarkiv_web_imagetag:
+        description: The tag for the radioarkiv frontend image. Defaults to "systemtest", which is tagged by radioarkiv-ui master build upon success.
+        default: systemtest
+        required: false
+        type: string
+    secrets:
+      mdb_github_token:
+        description: The github token used for checking out the systemtest repo
+        required: true
+
+
+  systemtest:
+
+    runs-on:
+      - self-hosted
+      - biggy
+
+    timeout-minutes: 30
+
+    steps:
+
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '8'
+
+      - name: Clone systemtest repo
+        uses: actions/checkout@v2
+        with:
+          repository: nrkno/radioarkiv-systemtest
+          token: ${{ secrets.mdb_github_token }}
+
+      - name: Check for image existence in azurecr
+        timeout-minutes: 3
+        shell: bash
+        run: |
+          CREDS="$(echo "${{ secrets.PLATTFORM_ACR_PUSH_CLIENT_ID }}:${{ secrets.PLATTFORM_ACR_PUSH_CLIENT_SECRET }}" | base64 -w 0)"
+          CHECKURL_LB="https://plattform.azurecr.io/v2/radioarkiv/radioarkiv-stub-standalone/manifests/${{ inputs.lydbanken_stub_imagetag }}"
+          CHECKURL_FE="https://plattform.azurecr.io/v2/radioarkiv/radioarkiv-web/manifests/${{ inputs.radioarkiv_web_imagetag }}"
+          while true; do
+            curl --fail --header "Authorization: Basic $CREDS" $CHECKURL_LB && curl --fail --header "Authorization: Basic $CREDS" $CHECKURL_FE && exit 0
+            sleep 5s
+          done
+
+      - name: Prepare systemtest
+        shell: bash
+        run: |
+          az acr login -u ${{ secrets.PLATTFORM_ACR_PUSH_CLIENT_ID }} -p ${{ secrets.PLATTFORM_ACR_PUSH_CLIENT_SECRET }} --name plattform
+          ./build-docker-compose.sh
+          docker-compose pull || (sleep 30s; docker-compose pull)
+          docker-compose --project-name lydbanken up --force-recreate -d
+        env:
+          STUB_DOCKER_ID: ${{ inputs.lydbanken_stub_imagetag }}
+          FRONTEND_DOCKER_ID: ${{ inputs.radioarkiv_web_imagetag }}
+
+      - name: Wait until API up
+        shell: bash
+        timeout-minutes: 2
+        run: |
+          while true; do
+            curl --fail "http://$(hostname):19000/api" && exit 0
+            sleep 10s
+          done
+
+      - name: Run systemtest
+        shell: bash
+        run: |
+          sleep 30s
+          ./gradlew \
+          -DFRONTEND_DOCKER_ID=$FRONTEND_DOCKER_ID \
+          -DFRONTEND_SERVER=http://$(hostname):$FRONTEND_PORT \
+          -DtestMode=headless \
+          -PmyGetAccessToken=${{ secrets.PLATTFORM_MYGET_WRITE_SECRET }} \
+          clean build
+        env:
+          STUB_DOCKER_ID: ${{ inputs.lydbanken_stub_imagetag }}
+          FRONTEND_DOCKER_ID: ${{ inputs.radioarkiv_web_imagetag }}
+          FRONTEND_PORT: 19000
+
+      - name: Publish unit test results
+        uses: mikepenz/action-junit-report@v2.7.0
+        if: always()
+        with:
+          commit: ${{ github.sha }}
+          check_name: Systemtest results
+          report_paths: "**/build/test-results/test/**/*.xml"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Teardown
+        if: always()
+        shell: bash
+        run: |
+          docker-compose --project-name lydbanken stop
+          docker-compose --project-name lydbanken rm -f
