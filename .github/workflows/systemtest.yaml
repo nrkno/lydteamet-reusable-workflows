@@ -19,6 +19,11 @@ on:
         default: plattform.azurecr.io
         required: false
         type: string
+      commit_hash:
+        description: Commit hash tests are run against, req'd by junit publish
+        required: true
+        type: string
+
     secrets:
       mdb_github_token:
         description: The github token used for checking out the systemtest repo
@@ -32,7 +37,7 @@ on:
 
 jobs:
 
-  systemtest:
+  execute:
 
     runs-on: biggy
 
@@ -101,9 +106,9 @@ jobs:
         uses: mikepenz/action-junit-report@v2.7.0
         if: always()
         with:
-          commit: ${{ github.sha }}
+          commit: ${{ inputs.commit }}
           check_name: Systemtest results
-          report_paths: "**/build/test-results/test/**/*.xml"
+          report_paths: "**/build/test-results/**/*.xml"
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Teardown
