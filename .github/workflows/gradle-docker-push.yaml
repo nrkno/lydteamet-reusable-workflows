@@ -87,7 +87,7 @@ jobs:
       - name: gradle build
         shell: bash
         run: |
-          ./gradlew ${{ inputs.gradle_secrets }} ${{ inputs.gradle_flags }} ${{ inputs.gradle_tasks }}
+          ./gradlew ${{ secrets.gradle_secrets }} ${{ inputs.gradle_flags }} ${{ inputs.gradle_tasks }}
         env:
           GRADLE_OPTS: ${{ inputs.gradle_opts }}
 
