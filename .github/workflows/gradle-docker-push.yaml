@@ -62,7 +62,7 @@ on:
         description: The OCI registry password
         required: false
       gradle_secrets:
-        description: "A string containing the gradle secrets to pass. Example: -PmyGetAccessToken=\${{ secrets.PLATTFORM_MYGET_WRITE_SECRET }"
+        description: "A string containing the gradle secrets to pass. Example: -PmyGetAccessToken=SECRET"
         required: false
         type: string
 
