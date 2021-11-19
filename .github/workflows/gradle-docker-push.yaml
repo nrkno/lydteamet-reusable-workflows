@@ -51,6 +51,11 @@ on:
         default: plattform.azurecr.io
         required: false
         type: string
+      oci_push:
+        description: Whether to push the OCI image after build
+        default: true
+        required: false
+        type: boolean
     secrets:
       mdb_github_token:
         description: The github token used for checking out source_repository
@@ -103,4 +108,4 @@ jobs:
         with:
           context: ${{ inputs.oci_context_path }}
           push: false
-          tags: ${{ inputs.oci_repository_name }}:${{ inputs.oci_image_tag }}
+          tags: ${{ inputs.oci_registry }}/${{ inputs.oci_repository_name }}:${{ inputs.oci_image_tag }}
