@@ -39,7 +39,7 @@ on:
         default: "."
         required: false
         type: string
-      oci_repository:
+      oci_repository_name:
         description: |
           The repository name for the image. Example: "radioarkiv/lydbanken-standalone". Folder and image name.
           If not given, docker image will not be built/pushed.
