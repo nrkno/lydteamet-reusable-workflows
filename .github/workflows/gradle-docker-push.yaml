@@ -27,15 +27,15 @@ on:
         description: "A string containing the gradle options to pass. Example: -Pit=yesq -Djms.port=25446"
         required: false
         type: string
-      tag:
+      oci_image_tag:
         description: "The tag for the image. Defaults to latest"
         default: latest
         required: false
         type: string
-      docker_context_path:
+      oci_context_path:
         description: |
           The path where the docker files are located. Also called the "context" by docker.
-          If not given, docker image will not be built/pushed.
+          Defaults to "."
         default: "."
         required: false
         type: string
@@ -55,10 +55,10 @@ on:
       mdb_github_token:
         description: The github token used for checking out source_repository
         required: true
-      registry_username:
+      oci_registry_username:
         description: The OCI registry username
         required: false
-      registry_password:
+      oci_registry_password:
         description: The OCI registry password
         required: false
       gradle_secrets:
