@@ -46,21 +46,25 @@ on:
           If it is given, remember to also consider the tag, and remember that azurecr requires the secrets registry_username and registry_password.
         required: false
         type: string
-      registry:
-        description: The OCI registry to upload container images to
+      oci_registry:
+        description: The OCI registry
         default: plattform.azurecr.io
         required: false
         type: string
     secrets:
       mdb_github_token:
-        description: The github token used for checking out the systemtest repo
+        description: The github token used for checking out source_repository
         required: true
       registry_username:
-        description: The OCI registry username for pulling images
+        description: The OCI registry username
         required: false
       registry_password:
-        description: The OCI registry password for pulling images
+        description: The OCI registry password
         required: false
+      gradle_secrets:
+        description: "A string containing the gradle secrets to pass. Example: -PmyGetAccessToken=${{ secrets.PLATTFORM_MYGET_WRITE_SECRET }}"
+        required: false
+        type: string
 
 jobs:
 
@@ -84,7 +88,7 @@ jobs:
       - name: gradle build
         shell: bash
         run: |
-          ./gradlew ${{ inputs.gradle_flags }} ${{ inputs.gradle_tasks }}
+          ./gradlew ${{ inputs.gradle_secrets }} ${{ inputs.gradle_flags }} ${{ inputs.gradle_tasks }}
         env:
           GRADLE_OPTS: ${{ inputs.gradle_opts }}
 
