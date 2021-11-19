@@ -107,5 +107,5 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ${{ inputs.oci_context_path }}
-          push: false
+          push: ${{ inputs.oci_push }}
           tags: ${{ inputs.oci_registry }}/${{ inputs.oci_repository_name }}:${{ inputs.oci_image_tag }}
