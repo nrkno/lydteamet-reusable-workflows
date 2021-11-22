@@ -10,9 +10,20 @@ on:
           Example: nrkno/lydbanken. Usually $GITHUB_REPOSITORY is a safe bet
         required: true
         type: string
+      perform_gradle_build:
+        descripton: Whether or not to perform a gradle build
+        required: true
+        type: boolean
+        default: false
+      perform_oci_image_build:
+        descripton: Whether or not to build a OCI image
+        required: true
+        type: boolean
+        default: false
       java_release:
         description: "Major java version to use for build. Example: 11"
-        required: true
+        required: false
+        default: "17"
         type: string
       gradle_tasks:
         description: "A string containing the gradle tasks to perform. Example: clean build"
@@ -51,7 +62,7 @@ on:
         default: plattform.azurecr.io
         required: false
         type: string
-      oci_push:
+      oci_image_push:
         description: Whether to push the OCI image after build
         default: true
         required: false
@@ -74,7 +85,7 @@ jobs:
 
   execute:
 
-    runs-on: biggy
+    runs-on: lydteamet
 
     steps:
 
@@ -86,10 +97,12 @@ jobs:
           persist-credentials: false
 
       - uses: actions/setup-java@v1
+        if: ${{ inputs.perform_gradle_build }}
         with:
           java-version: ${{ inputs.java_release }}
 
       - name: gradle build
+        if: ${{ inputs.perform_gradle_build }}
         shell: bash
         run: |
           ./gradlew ${{ secrets.gradle_secrets }} ${{ inputs.gradle_flags }} ${{ inputs.gradle_tasks }}
@@ -97,6 +110,7 @@ jobs:
           GRADLE_OPTS: ${{ inputs.gradle_opts }}
 
       - name: Auth for OCI registry
+        if: ${{ inputs.perform_oci_image_build }}
         uses: docker/login-action@v1
         with:
           registry: ${{ inputs.oci_registry }}
@@ -104,8 +118,9 @@ jobs:
           password: ${{ secrets.oci_registry_password }}
 
       - name: Build and push OCI image
+        if: ${{ inputs.perform_oci_image_build }}
         uses: docker/build-push-action@v2
         with:
           context: ${{ inputs.oci_context_path }}
-          push: ${{ inputs.oci_push }}
+          push: ${{ inputs.oci_image_push }}
           tags: ${{ inputs.oci_registry }}/${{ inputs.oci_repository_name }}:${{ inputs.oci_image_tag }}
