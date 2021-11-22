@@ -12,12 +12,12 @@ on:
         type: string
       perform_gradle_build:
         description: Whether or not to perform a gradle build
-        required: true
+        required: false
         type: boolean
         default: false
       perform_oci_image_build:
         description: Whether or not to build a OCI image
-        required: true
+        required: false
         type: boolean
         default: false
       java_release:
@@ -32,11 +32,13 @@ on:
         type: string
       gradle_flags:
         description: "A string containing the gradle flags to pass. Example: -Pit=yesq -Djms.port=25446"
+        default: ""
         required: false
         type: string
       gradle_opts:
         description: "A string containing the gradle options to pass. Example: -Pit=yesq -Djms.port=25446"
         required: false
+        default: ""
         type: string
       oci_image_tag:
         description: "The tag for the image. Defaults to latest"
