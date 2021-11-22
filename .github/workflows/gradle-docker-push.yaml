@@ -11,12 +11,12 @@ on:
         required: true
         type: string
       perform_gradle_build:
-        descripton: Whether or not to perform a gradle build
+        description: Whether or not to perform a gradle build
         required: true
         type: boolean
         default: false
       perform_oci_image_build:
-        descripton: Whether or not to build a OCI image
+        description: Whether or not to build a OCI image
         required: true
         type: boolean
         default: false
