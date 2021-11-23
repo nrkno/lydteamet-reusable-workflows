@@ -123,7 +123,7 @@ jobs:
             || echo "::set-output name=oci_image_exists::false"
 
       - name: Auth for OCI registry
-        if: ${{ inputs.perform_oci_image_build and steps.pull.outputs.oci_image_exists == 'false' }}
+        if: ${{ inputs.perform_oci_image_build && steps.pull.outputs.oci_image_exists == 'false' }}
         uses: docker/login-action@v1
         with:
           registry: ${{ inputs.oci_registry }}
@@ -131,7 +131,7 @@ jobs:
           password: ${{ secrets.oci_registry_password }}
 
       - name: Build and push OCI image
-        if: ${{ inputs.perform_oci_image_build and steps.pull.outputs.oci_image_exists == 'false' }}
+        if: ${{ inputs.perform_oci_image_build && steps.pull.outputs.oci_image_exists == 'false' }}
         uses: docker/build-push-action@v2
         with:
           context: ${{ inputs.oci_context_path }}
