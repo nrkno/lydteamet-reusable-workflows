@@ -1,0 +1,6 @@
+---
+name: Helm deploy
+
+on:
+  workflow_call:
+    inputs:
