@@ -4,6 +4,11 @@ name: Gradle-docker-push
 on:
   workflow_call:
     inputs:
+      update_submodules:
+        description: Whether or not to update git submodules
+        default: false
+        required: false
+        type: boolean
       perform_gradle_build:
         description: Whether or not to perform a gradle build
         required: false
@@ -102,7 +107,7 @@ jobs:
           repository: ${{ github.repository }}
           # github context from caller is available here, yay
           ref: ${{ github.sha }}
-          submodules: true
+          submodules: ${{ inputs.update_submodules }}
           token: ${{ github.token }}
           persist-credentials: false
 
