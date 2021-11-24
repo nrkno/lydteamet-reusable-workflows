@@ -29,7 +29,7 @@ on:
         required: false
         type: string
     secrets:
-      mdb_github_token:
+      github_token:
         description: The github token used for checking out the systemtest repo
         required: true
       registry_username:
@@ -60,7 +60,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: nrkno/radioarkiv-systemtest
-          token: ${{ secrets.mdb_github_token }}
+          token: ${{ secrets.github_token }}
 
       - name: Check for image existence in azurecr
         timeout-minutes: 3
