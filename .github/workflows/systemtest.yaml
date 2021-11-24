@@ -19,10 +19,6 @@ on:
         default: plattform.azurecr.io
         required: false
         type: string
-      commit_hash:
-        description: Commit hash tests are run against, req'd by junit publish
-        required: true
-        type: string
       java_release:
         description: Java release for systemtests
         default: "8"
@@ -113,7 +109,7 @@ jobs:
         uses: mikepenz/action-junit-report@v2.7.0
         if: always()
         with:
-          commit: ${{ inputs.commit_hash }}
+          commit: ${{ github.sha }}
           check_name: Systemtest results
           report_paths: "**/build/test-results/**/*.xml"
           github_token: ${{ secrets.GITHUB_TOKEN }}
