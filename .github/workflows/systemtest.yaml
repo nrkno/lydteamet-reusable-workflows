@@ -23,7 +23,11 @@ on:
         description: Commit hash tests are run against, req'd by junit publish
         required: true
         type: string
-
+      java_release:
+        description: Java release for systemtests
+        default: "8"
+        required: false
+        type: string
     secrets:
       mdb_github_token:
         description: The github token used for checking out the systemtest repo
@@ -50,7 +54,7 @@ jobs:
 
       - uses: actions/setup-java@v1
         with:
-          java-version: '8'
+          java-version: ${{ inputs.java_release }}
 
       - name: Clone systemtest repo
         uses: actions/checkout@v2
