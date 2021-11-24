@@ -40,6 +40,16 @@ on:
         required: false
         default: ""
         type: string
+      publish_junit_report:
+        description: If true, publish a junit report for the junit_report_path.
+        required: false
+        default: false
+        type: boolean
+      junit_report_path:
+        description: The path where junit test results will be found
+        required: false
+        default: "**/build/test-results/test/**/*.xml"
+        type: string
       oci_image_tag:
         description: "The tag for the image. Defaults to latest"
         default: latest
@@ -110,6 +120,15 @@ jobs:
           ./gradlew ${{ secrets.gradle_secrets }} ${{ inputs.gradle_flags }} ${{ inputs.gradle_tasks }}
         env:
           GRADLE_OPTS: ${{ inputs.gradle_opts }}
+
+      - name: Publish unit test results
+        uses: mikepenz/action-junit-report@v2
+        if: ${{ inputs.perform_gradle_build && inputs.publish_junit_report }}
+        with:
+          commit: ${{ github.sha }}
+          check_name: Unit test results
+          report_paths: ${{ inputs.junit_report_path }}
+          github_token: ${{ secrets.mdb_github_token }}
 
       - name: Check if oci image already exists
         if: ${{ inputs.perform_oci_image_build }}
