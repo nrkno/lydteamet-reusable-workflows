@@ -40,6 +40,11 @@ on:
         required: false
         default: ""
         type: string
+      gradle_timezone:
+        description: TZ definition for gradle buils
+        required: false
+        default: "Europe/Oslo"
+        type: string
       publish_junit_report:
         description: If true, publish a junit report for the junit_report_path.
         required: false
@@ -119,7 +124,7 @@ jobs:
         run: |
           ./gradlew ${{ secrets.gradle_secrets }} ${{ inputs.gradle_flags }} ${{ inputs.gradle_tasks }}
         env:
-          TZ: Europe/Oslo
+          TZ: ${{ inputs.gradle_timezone }}
           GRADLE_OPTS: ${{ inputs.gradle_opts }}
 
       - name: Publish unit test results
