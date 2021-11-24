@@ -4,12 +4,6 @@ name: Gradle-docker-push
 on:
   workflow_call:
     inputs:
-      source_repository:
-        description: |
-          The repository to check out, format owner/reponame
-          Example: nrkno/lydbanken. Usually $GITHUB_REPOSITORY is a safe bet
-        required: true
-        type: string
       perform_gradle_build:
         description: Whether or not to perform a gradle build
         required: false
@@ -105,7 +99,7 @@ jobs:
 
       - uses: actions/checkout@v2
         with:
-          repository: ${{ inputs.source_repository }}
+          repository: ${{ github.repository }}
           # github context from caller is available here, yay
           ref: ${{ github.sha }}
           submodules: true
