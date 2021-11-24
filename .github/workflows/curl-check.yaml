@@ -1,0 +1,33 @@
+---
+name: Curl check
+
+on:
+  workflow_call:
+    inputs:
+      url:
+        description: The URL to poll
+        required: true
+        type: string
+      timeout:
+        description: Timeout in minutes
+        required: false
+        default: "1"
+        type: string
+
+
+jobs:
+
+  execute:
+
+    runs-on: self-hosted
+
+    steps:
+
+      - name: curl
+        timeout-minutes: ${{ inputs.timeout }}
+        shell: bash
+        run: |
+          while true; do
+            curl -I --fail -X GET "${{ inputs.url }}" && exit 0
+            sleep 10s
+          done
