@@ -11,7 +11,7 @@ on:
       timeout-minutes:
         description: Timeout in minutes
         required: false
-        default: "1"
+        default: 1
         type: string
 
 
