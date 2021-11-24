@@ -12,7 +12,7 @@ on:
         description: Timeout in minutes
         required: false
         default: 1
-        type: string
+        type: number
 
 
 jobs:
