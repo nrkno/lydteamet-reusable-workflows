@@ -85,7 +85,7 @@ on:
         required: false
         type: boolean
     secrets:
-      mdb_github_token:
+      github_token:
         description: The github token used for checking out source_repository
         required: true
       oci_registry_username:
@@ -112,7 +112,7 @@ jobs:
           # github context from caller is available here, yay
           ref: ${{ github.sha }}
           submodules: true
-          token: ${{ secrets.mdb_github_token }}
+          token: ${{ secrets.github_token }}
           persist-credentials: false
 
       - uses: actions/setup-java@v1
@@ -136,7 +136,7 @@ jobs:
           commit: ${{ github.sha }}
           check_name: Unit test results
           report_paths: ${{ inputs.junit_report_path }}
-          github_token: ${{ secrets.mdb_github_token }}
+          github_token: ${{ secrets.github_token }}
 
       - name: Check if oci image already exists
         if: ${{ inputs.perform_oci_image_build }}
