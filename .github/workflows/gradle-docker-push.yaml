@@ -85,9 +85,6 @@ on:
         required: false
         type: boolean
     secrets:
-      github_token:
-        description: The github token used for checking out source_repository
-        required: true
       oci_registry_username:
         description: The OCI registry username
         required: false
@@ -112,7 +109,7 @@ jobs:
           # github context from caller is available here, yay
           ref: ${{ github.sha }}
           submodules: true
-          token: ${{ secrets.github_token }}
+          token: ${{ github.token }}
           persist-credentials: false
 
       - uses: actions/setup-java@v1
