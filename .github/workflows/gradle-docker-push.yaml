@@ -10,10 +10,10 @@ on:
           Example: nrkno/lydbanken. Usually $GITHUB_REPOSITORY is a safe bet
         required: true
         type: string
-      source_ref:
-        description: The git sha/branch/tag to check out. SHA is usually the option to go for.
-        required: true
-        type: string
+      # source_ref:
+      #   description: The git sha/branch/tag to check out. SHA is usually the option to go for.
+      #   required: true
+      #   type: string
       perform_gradle_build:
         description: Whether or not to perform a gradle build
         required: false
@@ -113,7 +113,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           repository: ${{ inputs.source_repository }}
-          ref: ${{ inputs.source_ref }}
+          ref: ${{ github.sha }}
           submodules: true
           token: ${{ secrets.mdb_github_token }}
           persist-credentials: false
