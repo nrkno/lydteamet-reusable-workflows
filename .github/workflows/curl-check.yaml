@@ -8,7 +8,7 @@ on:
         description: The URL to poll
         required: true
         type: string
-      timeout:
+      timeout-minutes:
         description: Timeout in minutes
         required: false
         default: "1"
@@ -21,10 +21,11 @@ jobs:
 
     runs-on: self-hosted
 
+    timeout-minutes: ${{ inputs.timeout-minutes }}
+
     steps:
 
       - name: curl
-        timeout-minutes: ${{ inputs.timeout }}
         shell: bash
         run: |
           while true; do
