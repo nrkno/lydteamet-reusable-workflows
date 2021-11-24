@@ -55,6 +55,7 @@ jobs:
       - name: Clone systemtest repo
         uses: actions/checkout@v2
         with:
+          ref: master
           repository: nrkno/radioarkiv-systemtest
           token: ${{ secrets.github_token }}
 
