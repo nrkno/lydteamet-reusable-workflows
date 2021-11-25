@@ -31,17 +31,17 @@ on:
       ignite_datasource_username:
         description: MySQL username for ignite
         type: string
-        required: true
+        required: false
         default: writer_radioarkivignite
       virtuoso_jdbc_username:
         description: Virtuoso username
         type: string
-        required: true
+        required: false
         default: dba
       elastic_username:
           description: Elasticsearch username
           type: string
-          required: true
+          required: false
           default: elastic
     secrets:
       datasource_password:
