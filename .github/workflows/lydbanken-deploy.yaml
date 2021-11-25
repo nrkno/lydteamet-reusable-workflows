@@ -1,0 +1,106 @@
+---
+name: Lydbanken deploy
+
+on:
+  workflow_call:
+    inputs:
+      # Required
+    se:
+        description: The image tag to deploy
+        type: string
+        required: true
+      environment:
+        description: The environment we are deploying to
+        type: string
+        required: true
+      digas_drop_folder:
+        description: Folder within container to find digas_drop files
+        type: string
+        required: true
+      # Non-required
+      send_to_digas_folder:
+        description: Folder within container to find send_to_digas files
+        type: string
+        required: false
+        default: /mnt/digas_import
+      datasource_username:
+        description: MySQL username
+        type: string
+        required: false
+        default: radioarkiv_user
+      ignite_datasource_username:
+        description: MySQL username for ignite
+        type: string
+        required: true
+        default: writer_radioarkivignite
+      virtuoso_jdbc_username:
+        description: Virtuoso username
+        type: string
+        required: true
+        default: dba
+      elastic_username:
+          description: Elasticsearch username
+          type: string
+          required: true
+          default: elastic
+    secrets:
+      datasource_password:
+        description: MySQL AXON password
+        required: true
+      elastic_password:
+        description: Elasticsearch password
+        required: true
+      ignite_datasource_password:
+        description: MySQL Ignite password
+        required: true
+      virtuoso_jdbc_password:
+        description: Virtuoso password
+        required: true
+      servicebus_connectionstring:
+        description: Azure Service Bus connection string
+        required: true
+
+jobs:
+
+  deploy:
+
+    runs-on: lydteamet
+
+    strategy:
+      matrix:
+        component:
+          - radioarkiv
+          - sound-ordering
+          - sigma-analyzer
+          - oda
+          - nonlinear-material
+          - metadataworld
+          - digas-exporter
+          - digas-analyzer
+
+    steps:
+
+      - uses: actions/checkout@v2
+
+      - name: Ansible run
+        shell: bash
+        run: |
+          echo '\
+          ansible-playbook \
+          -i ansible-hosts/${{ inputs.environment }} \
+          -u root \
+          -e "cont_name=${{ inputs.deploy_tag }}" \
+          -e "env=${{ inputs.environment }}" \
+          -e "send_to_digas_folder=${{ inputs.send_to_digas_folder }}" \
+          -e "properties=${{ inputs.environment }}.properties" \
+          -e "digas_drop_folder=${{ inputs.digas_drop_folder }}" \
+          -e "datasource_username=${{ inputs.datasource_username }}" \
+          -e "ignite_datasource_username=${{ inputs.ignite_datasource_username }}" \
+          -e "virtuoso_jdbc_username=${{ inputs.virtuoso_jdbc_username }}" \
+          -e "elastic_username=${{ inputs.elastic_username }}" \
+          -e "datasource_password=${{ secrets.datasource_password }}" \
+          -e "elastic_password=${{ secrets.elastic_password }}" \
+          -e "ignite_datasource_password=${{ secrets.ignite_datasource_password }}" \
+          -e "virtuoso_jdbc_password=${{ secrets.virtuoso_jdbc_password }}" \
+          -e "serviceBus_connectionString=${{ secrets.servicebus_connectionstring }}" \
+          ${{ matrix.component }}/${{ matrix.component }}-standalone/ansible-playbook.yml'
