@@ -5,7 +5,7 @@ on:
   workflow_call:
     inputs:
       # Required
-    deploy_tag:
+      deploy_tag:
         description: The image tag to deploy
         type: string
         required: true
