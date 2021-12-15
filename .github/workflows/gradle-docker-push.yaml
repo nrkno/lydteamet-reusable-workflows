@@ -9,6 +9,11 @@ on:
         default: false
         required: false
         type: boolean
+      git-persist-credentials:
+        description: Whether or not to persist git credentials on checkout
+        default: true
+        required: false
+        type: boolean
       perform_gradle_build:
         description: Whether or not to perform a gradle build
         required: false
@@ -84,6 +89,9 @@ on:
         required: false
         type: boolean
     secrets:
+      mdb_github_token:
+        description: The github token used for checking out repositories
+        required: true
       oci_registry_username:
         description: The OCI registry username
         required: false
@@ -108,8 +116,8 @@ jobs:
           # github context from caller is available here, yay
           ref: ${{ github.sha }}
           submodules: ${{ inputs.update_submodules }}
-          token: ${{ github.token }}
-          persist-credentials: false
+          token: ${{ secrets.mdb_github_token }}
+          persist-credentials: ${{ inputs.git-persist-credentials }}
 
       - uses: actions/setup-java@v1
         if: ${{ inputs.perform_gradle_build }}
