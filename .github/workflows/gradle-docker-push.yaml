@@ -154,6 +154,8 @@ jobs:
           project: Lydbanken
           path: "."
           format: "HTML"
+        env:
+          JAVA_HOME: ""
 
       - name: Upload CVE scan results
         if: ${{ inputs.perform_cve_scan }}
