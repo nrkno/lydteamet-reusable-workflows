@@ -88,11 +88,6 @@ on:
         default: true
         required: false
         type: boolean
-      perform_cve_scan:
-        description: Perform a CVE scan using OWASP Dependency scan
-        default: false
-        required: false
-        type: boolean
     secrets:
       mdb_github_token:
         description: The github token used for checking out repositories
@@ -146,23 +141,6 @@ jobs:
           check_name: Unit test results
           report_paths: ${{ inputs.junit_report_path }}
           github_token: ${{ secrets.github_token }}
-
-      - name: Perform CVE Scan
-        if: ${{ inputs.perform_cve_scan }}
-        uses: dependency-check/Dependency-Check_Action@1.1.0
-        with:
-          project: Lydbanken
-          path: "."
-          format: "HTML"
-        env:
-          JAVA_HOME: "/usr"
-
-      - name: Upload CVE scan results
-        if: ${{ inputs.perform_cve_scan }}
-        uses: actions/upload-artifact@v2
-        with:
-          name: CVE report upload
-          path: ${{github.workspace}}/reports
 
       - name: Check if oci image already exists
         if: ${{ inputs.perform_oci_image_build }}
