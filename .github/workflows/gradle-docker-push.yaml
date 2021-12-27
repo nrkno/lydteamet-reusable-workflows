@@ -155,7 +155,7 @@ jobs:
           path: "."
           format: "HTML"
         env:
-          JAVA_HOME: ""
+          JAVA_HOME: "/usr"
 
       - name: Upload CVE scan results
         if: ${{ inputs.perform_cve_scan }}
