@@ -171,6 +171,7 @@ jobs:
 
       - name: Trivy scan image
         uses: aquasecurity/trivy-action@master
+        if: ${{ inputs.perform_oci_image_build && steps.pull.outputs.oci_image_exists == 'false' }}
         with:
           image-ref: '${{ inputs.oci_registry }}/${{ inputs.oci_repository_name }}:${{ inputs.oci_image_tag }}'
           format: 'template'
@@ -178,6 +179,7 @@ jobs:
           output: 'trivy-results.sarif'
 
       - name:  Upload Trivy scan results to GitHub Security tab
+        if: ${{ inputs.perform_oci_image_build && steps.pull.outputs.oci_image_exists == 'false' }}
         uses: github/codeql-action/upload-sarif@v1
         with:
           sarif_file: 'trivy-results.sarif'
