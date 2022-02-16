@@ -135,12 +135,12 @@ jobs:
 
       - name: Publish unit test results
         uses: mikepenz/action-junit-report@v2
-        if: ${{ inputs.perform_gradle_build && inputs.publish_junit_report }}
+        if: ${{ inputs.perform_gradle_build && inputs.publish_junit_report && !cancelled() }}
         with:
           commit: ${{ github.sha }}
           check_name: Unit test results
           report_paths: ${{ inputs.junit_report_path }}
-          github_token: ${{ secrets.github_token }}
+          token: ${{ secrets.github_token }}
 
       - name: Check if oci image already exists
         if: ${{ inputs.perform_oci_image_build }}
