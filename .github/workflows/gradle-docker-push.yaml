@@ -140,7 +140,7 @@ jobs:
           commit: ${{ github.sha }}
           check_name: Unit test results
           report_paths: ${{ inputs.junit_report_path }}
-          token: ${{ secrets.github_token }}
+          token: ${{ secrets.mdb_github_token }}
 
       - name: Check if oci image already exists
         if: ${{ inputs.perform_oci_image_build }}
