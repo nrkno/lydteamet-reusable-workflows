@@ -88,10 +88,7 @@ on:
         default: true
         required: false
         type: boolean
-    secrets:
-      gradle_secrets:
-        description: "A string containing the gradle secrets to pass. Example: -PmyGetAccessToken=SECRET"
-        required: false
+    secrets: inherit
 
 jobs:
 
@@ -119,7 +116,7 @@ jobs:
         if: ${{ inputs.perform_gradle_build }}
         shell: bash
         run: |
-          ./gradlew ${{ secrets.gradle_secrets }} ${{ inputs.gradle_flags }} ${{ inputs.gradle_tasks }}
+          ./gradlew -PmyGetEnterpriseToken=${{ secrets.PLATTFORM_MYGET_ENTERPRISE_READ_SECRET }} ${{ inputs.gradle_flags }} ${{ inputs.gradle_tasks }}
         env:
           TZ: ${{ inputs.gradle_timezone }}
           GRADLE_OPTS: ${{ inputs.gradle_opts }}
