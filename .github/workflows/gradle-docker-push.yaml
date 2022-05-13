@@ -155,4 +155,4 @@ jobs:
           pull: ${{ inputs.oci_baseimage_pull }}
           context: ${{ inputs.oci_context_path }}
           push: ${{ inputs.oci_image_push }}
-          tags: ${{ secrets:PLATTFORM_CONTAINER_REGISTRY }}/${{ inputs.oci_repository_name }}:${{ inputs.oci_image_tag }}
+          tags: ${{ secrets.PLATTFORM_CONTAINER_REGISTRY }}/${{ inputs.oci_repository_name }}:${{ inputs.oci_image_tag }}
