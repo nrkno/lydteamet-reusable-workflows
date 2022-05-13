@@ -88,7 +88,6 @@ on:
         default: true
         required: false
         type: boolean
-    secrets: inherit
 
 jobs:
 
