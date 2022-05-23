@@ -166,11 +166,8 @@ jobs:
           username: ${{ secrets.oci_registry_username }}
           password: ${{ secrets.oci_registry_password }}
 
-      - name: Build and push OCI image
-        if: ${{ inputs.perform_oci_image_build && steps.pull.outputs.oci_image_exists == 'false' }}
-        uses: docker/build-push-action@v2
-        with:
-          pull: ${{ inputs.oci_baseimage_pull }}
-          context: ${{ inputs.oci_context_path }}
-          push: ${{ inputs.oci_image_push }}
-          tags: ${{ inputs.oci_registry }}/${{ inputs.oci_repository_name }}:${{ inputs.oci_image_tag }}
+      - name: Manually build and push images
+        shell: bash
+        run: |
+          docker build -t ${{ inputs.oci_registry }}/${{ inputs.oci_repository_name }}:${{ inputs.oci_image_tag }} ${{ inputs.oci_context_path }}
+          docker push ${{ inputs.oci_registry }}/${{ inputs.oci_repository_name }}:${{ inputs.oci_image_tag }}
