@@ -167,6 +167,7 @@ jobs:
           password: ${{ secrets.oci_registry_password }}
 
       - name: Manually build and push images
+        if: ${{ inputs.perform_oci_image_build && steps.pull.outputs.oci_image_exists == 'false' }}
         shell: bash
         run: |
           docker build -t ${{ inputs.oci_registry }}/${{ inputs.oci_repository_name }}:${{ inputs.oci_image_tag }} ${{ inputs.oci_context_path }}
